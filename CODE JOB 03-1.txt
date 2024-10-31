@@ -1,0 +1,546 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="script.js">
+    <script src="script.js" defer></script>
+
+
+    <title>Jeu du Taquin</title>
+    <style>
+        #puzzleContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 160px);
+            grid-template-rows: repeat(3, 160px);
+            gap: 2px;
+        }
+        .piece {
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+        }
+        .empty {
+            background-color: lightgray;
+        }
+        .message {
+            font-size: 1.5em;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+            crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+</head>
+<body>
+    <h1>Jeu du Taquin</h1>
+    <button id="restartButton" style="display:none;">Recommencer</button>
+    <div id="puzzleContainer">
+        <!-- Les pièces du puzzle seront générées ici par jQuery -->
+    </div>
+    <p class="message" id="message"></p>
+
+    <!-- <script>
+        $(document).ready(function() {
+            let puzzleContainer = $('#puzzleContainer');
+            let pieces = [
+                {id: 1, img: 'taquin/1.png'},
+                {id: 2, img: 'taquin/2.png'},
+                {id: 3, img: 'taquin/3.png'},
+                {id: 4, img: 'taquin/4.png'},
+                {id: 5, img: 'taquin/5.png'},
+                {id: 6, img: 'taquin/6.png'},
+                {id: 7, img: 'taquin/7.png'},
+                {id: 8, img: 'taquin/8.png'},
+                {id: 9, empty: true} // Case vide
+            ];
+
+            function initializePuzzle() {
+                pieces = pieces.sort(() => Math.random() - 0.5);
+                puzzleContainer.empty();
+                pieces.forEach(piece => {
+                    let pieceElement = $('<div></div>')
+                        .addClass('piece')
+                        .css('background-image', piece.img ? `url(${piece.img})` : 'none')
+                        .data('id', piece.id);
+                    if (piece.empty) {
+                        pieceElement.addClass('empty');
+                    }
+                    puzzleContainer.append(pieceElement);
+                });
+                makeDraggable();
+            }
+
+            function makeDraggable() {
+                $(".piece:not(.empty)").draggable({
+                    revert: "invalid"
+                });
+
+                $(".piece.empty").droppable({
+                    accept: ".piece:not(.empty)",
+                    drop: function(event, ui) {
+                        let dropped = $(ui.draggable);
+                        let empty = $(this);
+
+                        // Echanger les positions des éléments
+                        let droppedPosition = { top: dropped.css("top"), left: dropped.css("left") };
+                        let emptyPosition = { top: empty.css("top"), left: empty.css("left") };
+
+                        dropped.css({
+                            top: emptyPosition.top,
+                            left: emptyPosition.left
+                        });
+
+                        empty.css({
+                            top: droppedPosition.top,
+                            left: droppedPosition.left
+                        });
+
+                        // Echanger les objets dans le tableau pieces
+                        let droppedIndex = pieces.findIndex(piece => piece.id === dropped.data("id"));
+                        let emptyIndex = pieces.findIndex(piece => piece.empty);
+
+                        [pieces[droppedIndex], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[droppedIndex]];
+
+                        checkWin();
+                    }
+                });
+            }
+
+            function checkWin() {
+                let isWin = pieces.every((piece, index) => piece.id === index + 1 || piece.empty);
+                if (isWin) {
+                    $('.piece').draggable("disable"); // Désactiver les déplacements
+                    $('#message').text('Vous avez gagné').css('color', 'green');
+                    $('#restartButton').show();
+                }
+            }
+
+            $('#restartButton').click(function() {
+                $('#message').empty();
+                $(this).hide();
+                initializePuzzle();
+            });
+
+            initializePuzzle();
+        });
+    </script> -->
+</body>
+</html>
+
+______________________________
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="script.js">
+    <script src="script.js" defer></script>
+    <title>Jeu du Taquin</title>
+    <style>
+        #puzzleContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 160px);
+            grid-template-rows: repeat(3, 160px);
+            gap: 2px;
+        }
+        .piece {
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+        }
+        .empty {
+            background-color: lightgray;
+        }
+        .message {
+            font-size: 1.5em;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+</head>
+<body>
+    <h1>Jeu du Taquin</h1>
+    <button id="restartButton" style="display:none;">Recommencer</button>
+    <div id="puzzleContainer">
+        <!-- Les pièces du puzzle seront générées ici par jQuery -->
+    </div>
+    <p class="message" id="message"></p>
+
+    <script>
+        $(document).ready(function() {
+            let puzzleContainer = $('#puzzleContainer');
+            let pieces = [
+                {id: 1, img: 'taquin/1.png'},
+                {id: 2, img: 'taquin/2.png'},
+                {id: 3, img: 'taquin/3.png'},
+                {id: 4, img: 'taquin/4.png'},
+                {id: 5, img: 'taquin/5.png'},
+                {id: 6, img: 'taquin/6.png'},
+                {id: 7, img: 'taquin/7.png'},
+                {id: 8, img: 'taquin/8.png'},
+                {id: 9, empty: true} // Case vide
+            ];
+
+            function initializePuzzle() {
+                pieces = pieces.sort(() => Math.random() - 0.5);
+                puzzleContainer.empty();
+                pieces.forEach(piece => {
+                    let pieceElement = $('<div></div>')
+                        .addClass('piece')
+                        .css('background-image', piece.img ? `url(${piece.img})` : 'none')
+                        .data('id', piece.id);
+                    if (piece.empty) {
+                        pieceElement.addClass('empty');
+                    }
+                    puzzleContainer.append(pieceElement);
+                });
+                makeDraggable();
+            }
+
+            function makeDraggable() {
+                $(".piece:not(.empty)").draggable({
+                    revert: "invalid"
+                });
+
+                $(".piece.empty").droppable({
+                    accept: ".piece:not(.empty)",
+                    drop: function(event, ui) {
+                        let dropped = $(ui.draggable);
+                        let empty = $(this);
+
+                        // Echanger les images et les classes
+                        let emptyBackgroundImage = empty.css('background-image');
+                        empty.css('background-image', dropped.css('background-image'));
+                        empty.removeClass('empty').addClass('piece');
+                        
+                        dropped.css('background-image', emptyBackgroundImage);
+                        dropped.removeClass('piece').addClass('empty');
+                        
+                        // Echanger les objets dans le tableau pieces
+                        let droppedIndex = pieces.findIndex(piece => piece.id === dropped.data("id"));
+                        let emptyIndex = pieces.findIndex(piece => piece.empty);
+                        [pieces[droppedIndex], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[droppedIndex]];
+
+                        checkWin();
+                    }
+                });
+            }
+
+            function checkWin() {
+                let isWin = pieces.every((piece, index) => piece.id === index + 1 || piece.empty);
+                if (isWin) {
+                    $('.piece').draggable("disable"); // Désactiver les déplacements
+                    $('#message').text('Vous avez gagné').css('color', 'green');
+                    $('#restartButton').show();
+                }
+            }
+
+            $('#restartButton').click(function() {
+                $('#message').empty();
+                $(this).hide();
+                initializePuzzle();
+            });
+
+            initializePuzzle();
+        });
+    </script>
+</body>
+</html>
+
+______________________________
+
+#shuffleButton {
+        /* margin-bottom : 20px ; */
+        margin : 0px 0px 20px 174px
+        
+        }
+
+______________________________
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Taquin</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        #puzzleContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 160px);
+            grid-template-rows: repeat(3, 160px);
+            gap: 2px;
+        }
+        .piece {
+            width: 160px;
+            height: 160px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .empty {
+            background-color: lightgray;
+        }
+        .message {
+            font-size: 1.5em;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <h1>Jeu du Taquin</h1>
+    <button id="shuffleButton">Mélanger les Images</button>
+    <button id="restartButton" style="display:none;">Recommencer</button>
+    <div id="puzzleContainer"></div>
+    <p class="message" id="message"></p>
+
+    <script>
+        $(document).ready(function() {
+            const puzzleContainer = $('#puzzleContainer');
+            let pieces = [
+                { id: 1, img: 'taquin/1.png' },
+                { id: 2, img: 'taquin/2.png' },
+                { id: 3, img: 'taquin/3.png' },
+                { id: 4, img: 'taquin/4.png' },
+                { id: 5, img: 'taquin/5.png' },
+                { id: 6, img: 'taquin/6.png' },
+                { id: 7, img: 'taquin/7.png' },
+                { id: 8, img: 'taquin/8.png' },
+                { id: 9, empty: true } // Case vide
+            ];
+
+            function initializePuzzle() {
+                shufflePieces();
+                renderPuzzle();
+                makeDraggable();
+                $('#message').text('');
+                $('#restartButton').hide();
+            }
+
+            function shufflePieces() {
+                pieces.sort(() => Math.random() - 0.5);
+            }
+
+            function renderPuzzle() {
+                puzzleContainer.empty();
+                pieces.forEach(piece => {
+                    const pieceElement = $('<div></div>')
+                        .addClass('piece')
+                        .css('background-image', piece.img ? `url(${piece.img})` : 'none')
+                        .data('id', piece.id);
+                    if (piece.empty) {
+                        pieceElement.addClass('empty').css('background-image', 'none');
+                    }
+                    puzzleContainer.append(pieceElement);
+                });
+            }
+
+            function makeDraggable() {
+                $(".piece:not(.empty)").draggable({
+                    revert: "invalid",
+                    stack: ".piece",
+                    start: function() {
+                        $(this).css("z-index", 100);
+                    },
+                    stop: function() {
+                        $(this).css("z-index", "");
+                    }
+                });
+
+                $(".piece.empty").droppable({
+                    accept: ".piece:not(.empty)",
+                    drop: function(event, ui) {
+                        const dragged = $(ui.draggable);
+                        const empty = $(this);
+
+                        // Obtenir l'ID de la pièce déplacée
+                        const draggedId = dragged.data("id");
+
+                        // Échanger les images et les classes
+                        const tempImage = empty.css("background-image");
+                        empty.css("background-image", dragged.css("background-image"));
+                        dragged.css("background-image", tempImage);
+
+                        empty.toggleClass("empty piece");
+                        dragged.toggleClass("empty piece");
+
+                        // Mettre à jour le tableau de pièces
+                        updatePieces(draggedId);
+                        checkWin();
+                    }
+                });
+            }
+
+            function updatePieces(draggedId) {
+                const draggedIndex = pieces.findIndex(piece => piece.id === draggedId);
+                const emptyIndex = pieces.findIndex(piece => piece.empty);
+
+                // Échanger les objets dans le tableau
+                [pieces[draggedIndex], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[draggedIndex]];
+            }
+
+            function checkWin() {
+                const isWin = pieces.every((piece, index) => piece.empty || piece.id === index + 1);
+                if (isWin) {
+                    $('.piece').draggable("disable");
+                    $('#message').text('Vous avez gagné !').css('color', 'green');
+                    $('#restartButton').show();
+                }
+            }
+
+            $('#shuffleButton').click(function() {
+                initializePuzzle();
+                $('#message').text('');
+            });
+
+            $('#restartButton').click(function() {
+                initializePuzzle();
+            });
+
+            initializePuzzle();
+        });
+    </script>
+</body>
+</html>
+
+________________________________
+
+OK<<<<<<<<<<<<<JOB_03_BIS
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Taquin</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        #puzzleContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 160px);
+            grid-template-rows: repeat(3, 160px);
+            gap: 2px;
+        }
+        .piece {
+            width: 160px;
+            height: 160px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .empty {
+            background-color: lightgray;
+        }
+        .message {
+            font-size: 1.5em;
+        }
+        #shuffleButton {
+        /* margin-bottom : 20px ; */
+        margin : 0px 0px 20px 174px
+        
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <h1>Jeu du Taquin</h1>
+    <button id="shuffleButton">Mélanger les Images</button>
+    <button id="restartButton" style="display:none;">Recommencer</button>
+    <div id="puzzleContainer"></div>
+    <p class="message" id="message"></p>
+    <script>
+        $(document).ready(function() {
+            const puzzleContainer = $('#puzzleContainer');
+            let pieces = [
+                { id: 1, img: 'pirate/1.png' },
+                { id: 2, img: 'pirate/2.png' },
+                { id: 3, img: 'pirate/3.png' },
+                { id: 4, img: 'pirate/4.png' },
+                { id: 5, img: 'pirate/5.png' },
+                { id: 6, img: 'pirate/6.png' },
+                { id: 7, img: 'pirate/7.png' },
+                { id: 8, img: 'pirate/8.png' },
+                { id: 9, empty: true } // Case vide
+            ];
+
+            function initializePuzzle() {
+                shufflePieces();
+                renderPuzzle();
+                makeDraggable();
+                $('#message').text('');
+                $('#restartButton').hide();
+            }
+
+            function shufflePieces() {
+                pieces = pieces.sort(() => Math.random() - 0.5);
+            }
+
+            function renderPuzzle() {
+                puzzleContainer.empty();
+                pieces.forEach(piece => {
+                    const pieceElement = $('<div></div>')
+                        .addClass('piece')
+                        .css('background-image', piece.img ? `url(${piece.img})` : 'none')
+                        .data('id', piece.id);
+                    if (piece.empty) {
+                        pieceElement.addClass('empty').css('background-image', 'none');
+                    }
+                    puzzleContainer.append(pieceElement);
+                });
+            }
+
+            function makeDraggable() {
+                $(".piece:not(.empty)").draggable({
+                    revert: "invalid",
+                    start: function() {
+                        $(this).css("z-index", 100);
+                    },
+                    stop: function() {
+                        $(this).css("z-index", "");
+                    }
+                });
+
+                $(".piece.empty").droppable({
+                    accept: ".piece",
+                    drop: function(event, ui) {
+                        const emptyPiece = $(this);
+                        const draggedPiece = ui.draggable;
+
+                        const emptyIndex = pieces.findIndex(piece => piece.empty);
+                        const draggedIndex = pieces.findIndex(piece => piece.id === draggedPiece.data('id'));
+
+                        // Swap the empty piece and the dragged piece
+                        [pieces[emptyIndex], pieces[draggedIndex]] = [pieces[draggedIndex], pieces[emptyIndex]];
+
+                        renderPuzzle();
+                        makeDraggable();
+                    }
+                });
+            }
+
+    
+        
+
+            $('#shuffleButton').click(initializePuzzle);
+            $('#restartButton').click(initializePuzzle);
+
+            initializePuzzle();
+        });
+    </script>
+</body>
+</html>
+
+
+
+

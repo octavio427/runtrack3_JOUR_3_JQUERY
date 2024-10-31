@@ -1,0 +1,96 @@
+La fonction enableDraggableAndDroppable est centrale dans ce code car elle contrôle les fonctionnalités de glisser-déposer (drag-and-drop)
+ qui permettent de déplacer les pièces du puzzle. Elle assure que seules les pièces adjacentes à la case vide peuvent être déplacées, et
+ réinitialise les paramètres de drag-and-drop après chaque déplacement.
+
+Voici une explication détaillée de chaque étape de cette fonction :
+
+Étapes de enableDraggableAndDroppable
+Trouver l'index de la case vide :
+
+javascript
+Copier le code
+const emptyIndex = pieces.findIndex(piece => piece.empty);
+Cette ligne cherche l’index de l’objet piece qui a la propriété empty: true. Cela permet de localiser la position de la case vide dans la grille.
+emptyIndex sera utilisé pour calculer les indices des cases adjacentes.
+Calculer les indices adjacents à la case vide :
+
+javascript
+Copier le code
+const adjacentIndices = getAdjacentIndices(emptyIndex);
+La fonction getAdjacentIndices prend l’index de la case vide et retourne un tableau contenant les indices des cases adjacentes (haut, bas, gauche, 
+droite) dans la grille.
+adjacentIndices est ainsi un tableau contenant les positions des pièces pouvant être déplacées.
+Désactiver les fonctionnalités draggable pour toutes les pièces :
+
+javascript
+Copier le code
+$(".piece").each(function() {
+    if ($(this).data("ui-draggable")) {
+        $(this).draggable("destroy");
+    }
+});
+Avant d’activer draggable pour les pièces adjacentes, la fonction désactive draggable sur toutes les pièces pour éviter des conflits ou des effets
+ indésirables.
+Elle parcourt chaque élément avec la classe .piece, vérifie s'il est actuellement draggable, puis le détruit avec .draggable("destroy").
+Activer draggable pour les pièces adjacentes :
+
+javascript
+Copier le code
+adjacentIndices.forEach(index => {
+    if (!pieces[index].empty) {
+        $(`.piece`).eq(index).draggable({
+            revert: "invalid",
+            start: function() {
+                $(this).css("z-index", 100);
+            },
+            stop: function() {
+                $(this).css("z-index", "");
+            }
+        });
+    }
+});
+Cette boucle active draggable uniquement pour les pièces adjacentes à la case vide, en utilisant adjacentIndices.
+La méthode .eq(index) sélectionne la pièce au bon emplacement.
+Options de draggable :
+revert: "invalid" : Si la pièce est déposée en dehors de la case vide, elle revient à sa position d'origine.
+start et stop : Lorsqu’on commence à glisser une pièce, son z-index est augmenté pour qu’elle apparaisse au-dessus des autres; et lors du 
+relâchement, il est réinitialisé.
+Désactiver et réactiver droppable pour la case vide :
+
+javascript
+Copier le code
+$(".empty").each(function() {
+    if ($(this).data("ui-droppable")) {
+        $(this).droppable("destroy");
+    }
+}).droppable({
+    accept: ".piece:not(.empty)",
+    drop: function(event, ui) {
+        const draggedPiece = ui.draggable;
+        const draggedIndex = pieces.findIndex(piece => piece.id === draggedPiece.data('id'));
+        const emptyIndex = pieces.findIndex(piece => piece.empty);
+
+        if (adjacentIndices.includes(draggedIndex)) {
+            [pieces[emptyIndex], pieces[draggedIndex]] = [pieces[draggedIndex], pieces[emptyIndex]];
+
+            renderPuzzle();
+            enableDraggableAndDroppable();
+            checkWin();
+        }
+    }
+});
+Désactiver droppable existant : S’il existe un droppable actif sur la case vide, il est d’abord détruit pour éviter toute duplication.
+Activer droppable sur la case vide :
+La nouvelle case vide accepte seulement les éléments avec la classe .piece qui ne sont pas vides (.not(.empty)).
+drop event :
+Quand une pièce est déposée, drop se déclenche. On identifie les indices de la pièce déplacée et de la case vide.
+On vérifie que la pièce déplacée est adjacente à la case vide. Si oui, les objets dans pieces sont échangés.
+On rappelle renderPuzzle() et enableDraggableAndDroppable() pour mettre à jour l'affichage et les fonctionnalités de glisser-déposer, puis
+ on vérifie si le puzzle est terminé avec checkWin().
+Résumé
+La fonction enableDraggableAndDroppable :
+
+Restreint les mouvements aux pièces adjacentes.
+Échange la case vide et la pièce glissée.
+Réinitialise les paramètres de glisser-déposer après chaque déplacement pour maintenir la logique du jeu.
+En combinant ces étapes, cette fonction assure que le puzzle reste interactif et que les règles de déplacement du taquin sont respectées.
